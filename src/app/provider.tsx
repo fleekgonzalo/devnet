@@ -7,6 +7,7 @@ import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import Navbar from "@/components/navbar";
 import { config } from "@/wagmi";
 import { WagmiProvider } from "wagmi";
+import { authUser } from "@/actions/user";
 
 export const queryClient = new QueryClient();
 
@@ -17,6 +18,12 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
         environmentId: process.env.NEXT_PUBLIC_ENV_ID || "",
         walletConnectors: [EthereumWalletConnectors],
         coinbaseWalletPreference: "smartWalletOnly",
+        events: {
+          onAuthSuccess: (args) => {
+            console.log("Auth success");
+            if (args.user.userId) authUser(args.user.userId);
+          },
+        },
       }}
     >
       <WagmiProvider config={config}>

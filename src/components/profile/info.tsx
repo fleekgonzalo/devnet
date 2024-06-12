@@ -1,8 +1,13 @@
+"use client";
+
 import React from "react";
 import Header from "./header";
 import Link from "next/link";
+import { useUser } from "@/hooks/useUser";
 
 const Info = () => {
+  const { about } = useUser();
+
   return (
     <div className="p-12 flex gap-y-5 flex-col w-full">
       <Header />
@@ -14,9 +19,7 @@ const Info = () => {
           </h4>
         </div>
         <div className="px-4 pt-1 pb-3 flex flex-col gap-0 items-start self-stretch relative w-full bg-transparent">
-          <p className="leading-6 text-base text-[#121417]">
-            The most powerful technology company in the world
-          </p>
+          <p className="leading-6 text-base text-[#121417]">{about}</p>
         </div>
       </section>
 

@@ -32,7 +32,9 @@ const Header = () => {
               </h4>
             </div>
             <div className="flex flex-col gap-0 items-start relative bg-transparent">
-              <p className="leading-6 text-base text-[#637587]">Taiwan</p>
+              <p className="leading-6 text-base text-[#637587]">
+                {user?.jobTitle}
+              </p>
             </div>
           </div>
         </div>
