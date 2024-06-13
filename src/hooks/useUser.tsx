@@ -3,21 +3,27 @@ import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useEffect, useState } from "react";
 
 //TODO get more user info
+type User = {
+  id: string;
+  description: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 export function useUser() {
-  const { user } = useDynamicContext();
-  const [about, setAbout] = useState<string>("");
-
-  const _getUser = async () => {
-    if (user?.userId) {
-      const _user = await getUser(user.userId);
-      setAbout(_user.description || "No description provided yet.");
-    }
-  };
+  const { user: dynamicUser } = useDynamicContext();
+  const [user, setUser] = useState<User>();
 
   useEffect(() => {
-    _getUser();
-  }, [user]);
+    const _getUser = async () => {
+      if (dynamicUser?.userId) {
+        const _user = await getUser(dynamicUser.userId);
+        setUser(_user);
+      }
+    };
 
-  return { about };
+    _getUser();
+  }, [dynamicUser]);
+
+  return { user };
 }

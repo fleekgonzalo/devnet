@@ -4,9 +4,12 @@ import React from "react";
 import Header from "./header";
 import Link from "next/link";
 import { useUser } from "@/hooks/useUser";
+import { createPlan } from "@/actions/plans";
 
 const Info = () => {
-  const { about } = useUser();
+  const { user } = useUser();
+
+  console.log(user);
 
   return (
     <div className="p-12 flex gap-y-5 flex-col w-full">
@@ -19,7 +22,9 @@ const Info = () => {
           </h4>
         </div>
         <div className="px-4 pt-1 pb-3 flex flex-col gap-0 items-start self-stretch relative w-full bg-transparent">
-          <p className="leading-6 text-base text-[#121417]">{about}</p>
+          <p className="leading-6 text-base text-[#121417]">
+            {user?.description}
+          </p>
         </div>
       </section>
 
@@ -75,13 +80,16 @@ const Info = () => {
         <Plan name="AWS Certified SysOps Administrator" />
         <div className="flex justify-between items-start self-stretch relative w-[960px] bg-transparent">
           <div className="px-4 py-3 flex gap-3 justify-end items-start flex-1 flex-wrap relative w-full bg-transparent">
-            <div className="overflow-hidden rounded-xl px-4 flex gap-0 justify-center items-center relative h-10 bg-[#f0f2f5]">
+            <button
+              onClick={() => createPlan(user?.id || "")}
+              className="overflow-hidden rounded-xl px-4 flex gap-0 justify-center items-center relative h-10 bg-[#f0f2f5]"
+            >
               <div className="overflow-hidden flex flex-col gap-0 items-center relative bg-transparent">
                 <p className="text-center font-bold leading-[21px] text-sm text-[#141414]">
-                  View All (15)
+                  Create Plan
                 </p>
               </div>
-            </div>
+            </button>
             <div className="overflow-hidden rounded-xl px-4 flex gap-0 justify-center items-center relative h-10 bg-[#f0f2f5]">
               <div className="overflow-hidden flex flex-col gap-0 items-center relative bg-transparent">
                 <p className="text-center font-bold leading-[21px] text-sm text-[#141414]">
