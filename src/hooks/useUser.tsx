@@ -2,7 +2,6 @@ import { getUser } from "@/actions/user";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useEffect, useState } from "react";
 
-//TODO get more user info
 type User = {
   id: string;
   description: string | null;

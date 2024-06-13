@@ -1,6 +1,6 @@
 import React from "react";
 
-const Products = () => {
+const Page = () => {
   return (
     <div className="mt-[65px] overflow-hidden py-5 flex flex-col gap-0 items-start relative w-[960px] bg-transparent">
       <div className="flex flex-col gap-0 items-start self-stretch relative w-full bg-transparent">
@@ -123,4 +123,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default Page;
