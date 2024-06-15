@@ -8,7 +8,7 @@ export async function createPlan(
   userId: string,
   planData: {
     period: string;
-    contract: string;
+    contract: `0x${string}`;
     name: string;
     description: string;
   }
@@ -16,7 +16,9 @@ export async function createPlan(
   console.log("Creating plan for user", userId);
   const plan = await prisma.plan.create({
     data: {
-      userId,
+      User: {
+        connect: { id: userId },
+      },
       ...planData,
     },
   });
@@ -48,7 +50,6 @@ export async function getPlansByUserId(userId: string) {
     where: { userId },
   });
 
-  console.log("Plans fetched", plans);
   return plans;
 }
 

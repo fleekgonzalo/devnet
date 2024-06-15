@@ -1,6 +1,10 @@
+import { useUser } from "@/hooks/useUser";
+import Link from "next/link";
 import React from "react";
 
 const Plans = () => {
+  const { plans } = useUser();
+
   return (
     <section className="relative w-[960px] h-[484px] bg-transparent">
       <div className="px-4 pt-5 pb-3 flex flex-col gap-0 items-start self-stretch relative w-[960px] bg-transparent">
@@ -8,22 +12,25 @@ const Plans = () => {
           Learning Plans
         </h4>
       </div>
-      <Plan name="AWS Certified Developer" />
-      <Plan name="AWS Certified SysOps Administrator" />
-      <Plan name="AWS Certified SysOps Administrator" />
+      {plans?.map((plan, index) => {
+        return <Plan key={index} name={plan.name} />;
+      })}
       <div className="flex justify-between items-start self-stretch relative w-[960px] bg-transparent">
         <div className="px-4 py-3 flex gap-3 justify-end items-start flex-1 flex-wrap relative w-full bg-transparent">
-          <button className="overflow-hidden rounded-xl px-4 flex gap-0 justify-center items-center relative h-10 bg-[#f0f2f5]">
+          <Link
+            href="/profile/setting/create-plan"
+            className="overflow-hidden rounded-xl px-4 flex gap-0 justify-center items-center relative h-10 bg-[#f0f2f5]"
+          >
             <div className="overflow-hidden flex flex-col gap-0 items-center relative bg-transparent">
               <p className="text-center font-bold leading-[21px] text-sm text-[#141414]">
                 Create Plan
               </p>
             </div>
-          </button>
+          </Link>
           <div className="overflow-hidden rounded-xl px-4 flex gap-0 justify-center items-center relative h-10 bg-[#f0f2f5]">
             <div className="overflow-hidden flex flex-col gap-0 items-center relative bg-transparent">
               <p className="text-center font-bold leading-[21px] text-sm text-[#141414]">
-                Create Plan
+                Show All
               </p>
             </div>
           </div>

@@ -1,6 +1,11 @@
-import React from "react";
+import { useUser } from "@/hooks/useUser";
+import { useMemo } from "react";
 
-const About = ({ description }: { description: string }) => {
+const About = () => {
+  const { user } = useUser();
+
+  const userDescription = useMemo(() => user?.description, [user?.description]);
+
   return (
     <section>
       <div className="px-4 pt-5 pb-3 flex flex-col gap-0 items-start self-stretch relative w-full bg-transparent">
@@ -9,7 +14,7 @@ const About = ({ description }: { description: string }) => {
         </h4>
       </div>
       <div className="px-4 pt-1 pb-3 flex flex-col gap-0 items-start self-stretch relative w-full bg-transparent">
-        <p className="leading-6 text-base text-[#121417]">{description}</p>
+        <p className="leading-6 text-base text-[#121417]">{userDescription!}</p>
       </div>
     </section>
   );

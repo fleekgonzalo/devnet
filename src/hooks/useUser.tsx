@@ -1,28 +1,29 @@
+import { getPlansByUserId } from "@/actions/plans";
 import { getUser } from "@/actions/user";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import { useEffect, useState } from "react";
+import useSWR from "swr";
 
-type User = {
-  id: string;
-  description: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+const fetcher = async (id: string) => {
+  console.log("Fetching user data");
+  return await getUser(id);
+};
+
+const planFetcher = async (id: string) => {
+  console.log("Fetching plan data");
+  return await getPlansByUserId(id);
 };
 
 export function useUser() {
   const { user: dynamicUser } = useDynamicContext();
-  const [user, setUser] = useState<User>();
+  const { data: user } = useSWR(
+    dynamicUser?.userId ? `user/${dynamicUser.userId}` : null,
+    () => fetcher(dynamicUser?.userId!)
+  );
 
-  useEffect(() => {
-    const _getUser = async () => {
-      if (dynamicUser?.userId) {
-        const _user = await getUser(dynamicUser.userId);
-        setUser(_user);
-      }
-    };
+  const { data: plans } = useSWR(
+    dynamicUser?.userId ? `plans/${dynamicUser.userId}` : null,
+    () => planFetcher(dynamicUser?.userId!)
+  );
 
-    _getUser();
-  }, [dynamicUser]);
-
-  return { user };
+  return { user, plans };
 }
