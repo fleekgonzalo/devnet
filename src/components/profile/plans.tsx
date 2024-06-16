@@ -1,52 +1,18 @@
-import { useUser } from "@/hooks/useUser";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import type { Plan } from "@prisma/client";
 import Link from "next/link";
 import React from "react";
 
-const Plans = () => {
-  const { plans } = useUser();
-
+const Plan = ({ plan }: { plan: Plan }) => {
   return (
-    <section className="relative w-[960px] h-[484px] bg-transparent">
-      <div className="px-4 pt-5 pb-3 flex flex-col gap-0 items-start self-stretch relative w-[960px] bg-transparent">
-        <h4 className="font-bold leading-7 text-[22px] text-[#141414]">
-          Learning Plans
-        </h4>
-      </div>
-      {plans?.map((plan, index) => {
-        return <Plan key={index} name={plan.name} />;
-      })}
-      <div className="flex justify-between items-start self-stretch relative w-[960px] bg-transparent">
-        <div className="px-4 py-3 flex gap-3 justify-end items-start flex-1 flex-wrap relative w-full bg-transparent">
-          <Link
-            href="/profile/setting/create-plan"
-            className="overflow-hidden rounded-xl px-4 flex gap-0 justify-center items-center relative h-10 bg-[#f0f2f5]"
-          >
-            <div className="overflow-hidden flex flex-col gap-0 items-center relative bg-transparent">
-              <p className="text-center font-bold leading-[21px] text-sm text-[#141414]">
-                Create Plan
-              </p>
-            </div>
-          </Link>
-          <div className="overflow-hidden rounded-xl px-4 flex gap-0 justify-center items-center relative h-10 bg-[#f0f2f5]">
-            <div className="overflow-hidden flex flex-col gap-0 items-center relative bg-transparent">
-              <p className="text-center font-bold leading-[21px] text-sm text-[#141414]">
-                Show All
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const Plan = ({ name }: { name: string }) => {
-  return (
-    <div className="px-4 py-3 flex justify-between items-center self-stretch relative w-[960px] bg-white">
+    <Link
+      href={`/profile/plan/${plan.id}`}
+      className="px-4 py-3 flex justify-between items-center self-stretch relative w-[960px] bg-white"
+    >
       <div className="flex gap-4 items-center relative bg-transparent">
         <div className="overflow-hidden rounded-lg relative w-[85px] h-12 bg-[url('https://picsum.photos/id/56/48/85')] bg-cover bg-center"></div>
         <div className="overflow-hidden flex flex-col gap-0 items-start flex-1 relative w-full bg-transparent">
-          <p className="leading-6 text-base text-[#141414]">{name}</p>
+          <p className="leading-6 text-base text-[#141414]">{plan.name}</p>
         </div>
       </div>
       <div className="flex flex-col gap-0 items-start relative bg-transparent">
@@ -70,7 +36,45 @@ const Plan = ({ name }: { name: string }) => {
           </div>
         </div>
       </div>
-    </div>
+    </Link>
+  );
+};
+
+const Plans = () => {
+  const { plans } = useCurrentUser();
+
+  return (
+    <section className="relative w-[960px] h-[484px] bg-transparent">
+      <div className="px-4 pt-5 pb-3 flex flex-col gap-0 items-start self-stretch relative w-[960px] bg-transparent">
+        <h4 className="font-bold leading-7 text-[22px] text-[#141414]">
+          Learning Plans
+        </h4>
+      </div>
+      {plans?.map((plan, index) => {
+        return <Plan key={index} plan={plan} />;
+      })}
+      <div className="flex justify-between items-start self-stretch relative w-[960px] bg-transparent">
+        <div className="px-4 py-3 flex gap-3 justify-end items-start flex-1 flex-wrap relative w-full bg-transparent">
+          <Link
+            href="/profile/setting/create-plan"
+            className="overflow-hidden rounded-xl px-4 flex gap-0 justify-center items-center relative h-10 bg-[#f0f2f5]"
+          >
+            <div className="overflow-hidden flex flex-col gap-0 items-center relative bg-transparent">
+              <p className="text-center font-bold leading-[21px] text-sm text-[#141414]">
+                Create Plan
+              </p>
+            </div>
+          </Link>
+          <div className="overflow-hidden rounded-xl px-4 flex gap-0 justify-center items-center relative h-10 bg-[#f0f2f5]">
+            <div className="overflow-hidden flex flex-col gap-0 items-center relative bg-transparent">
+              <p className="text-center font-bold leading-[21px] text-sm text-[#141414]">
+                Show All
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 

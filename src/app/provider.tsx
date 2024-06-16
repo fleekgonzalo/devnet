@@ -7,7 +7,7 @@ import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import Navbar from "@/components/navbar";
 import { config } from "@/wagmi";
 import { WagmiProvider } from "wagmi";
-import { authUser } from "@/actions/user";
+import { authUser } from "@/actions/db/user";
 
 export const queryClient = new QueryClient();
 

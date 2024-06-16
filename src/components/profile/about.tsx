@@ -1,8 +1,8 @@
-import { useUser } from "@/hooks/useUser";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useMemo } from "react";
 
 const About = () => {
-  const { user } = useUser();
+  const { user } = useCurrentUser();
 
   const userDescription = useMemo(() => user?.description, [user?.description]);
 

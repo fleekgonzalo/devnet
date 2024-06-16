@@ -28,6 +28,7 @@ model Plan {
   userId      String
   period      String
   contract    String
+  price       BigInt
   name        String
   description String
   User        User     @relation(fields: [userId], references: [id])

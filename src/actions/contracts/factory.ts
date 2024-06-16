@@ -1,9 +1,20 @@
 "use server";
 
-import type { Hex } from "viem";
+import { decodeEventLog, type Hex, type Log } from "viem";
 import { createConfig, http, waitForTransactionReceipt } from "@wagmi/core";
 import { base, zora, zoraSepolia } from "@wagmi/core/chains";
-import { createPlan } from "../plans";
+import { createPlan } from "../db/plans";
+import { FACTORY_ABI } from "@/abis/factory";
+
+const parseCreatePlansLogs = (log: Log) => {
+  const event = decodeEventLog({
+    abi: FACTORY_ABI,
+    ...log,
+  });
+
+  if (event.eventName === "PlanCreated") return event.args.plan;
+  throw new Error("No PlanCreated event found");
+};
 
 const config = createConfig({
   chains: [base, zora, zoraSepolia],
@@ -25,13 +36,14 @@ export const factoryCreatePlan = async (
 ) => {
   console.log("Waiting Tx... ");
 
-  const { contractAddress } = await waitForTransactionReceipt(config, {
-    confirmations: 2,
+  const receipt = await waitForTransactionReceipt(config, {
+    chainId: zoraSepolia.id,
+    confirmations: 1,
     hash,
   });
 
-  console.log("contractAddress", contractAddress);
+  const createdPlan = parseCreatePlansLogs(receipt.logs[1]);
 
-  if (!contractAddress) throw new Error("No contract address found");
-  await createPlan(userId, { ...planData, contract: contractAddress });
+  if (!receipt.to) throw new Error("No contract address found");
+  await createPlan(userId, { ...planData, contract: createdPlan });
 };

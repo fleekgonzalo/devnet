@@ -1,5 +1,5 @@
-import { getPlansByUserId } from "@/actions/plans";
-import { getUser } from "@/actions/user";
+import { getPlansByUserId } from "@/actions/db/plans";
+import { getUser } from "@/actions/db/user";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import useSWR from "swr";
 
@@ -13,7 +13,7 @@ const planFetcher = async (id: string) => {
   return await getPlansByUserId(id);
 };
 
-export function useUser() {
+export function useCurrentUser() {
   const { user: dynamicUser } = useDynamicContext();
   const { data: user } = useSWR(
     dynamicUser?.userId ? `user/${dynamicUser.userId}` : null,

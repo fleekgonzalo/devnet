@@ -1,11 +1,12 @@
 "use client";
 
-import { useUser } from "@/hooks/useUser";
 import React from "react";
 import { useFormState } from "react-dom";
 import { useWriteContract } from "wagmi";
-import { FACTORY_ABI } from "@/abis/factory";
 import { factoryCreatePlan } from "@/actions/contracts/factory";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { FACTORY_ABI } from "@/abis/factory";
+import { FACTORY_ADDRESS } from "@/utils/constants";
 
 const CreatePlanForm = () => {
   return (
@@ -100,41 +101,54 @@ const CreatePlanForm = () => {
 };
 
 const Page = () => {
-  const { user } = useUser();
+  const { user } = useCurrentUser();
 
   const { writeContractAsync } = useWriteContract();
 
   async function action(_: null, formData: FormData) {
-    if (!user?.id) throw new Error("User not found");
+    try {
+      if (!user?.id) throw new Error("User not found");
 
-    const userId = user.id;
+      const userId = user.id;
 
-    const period = formData.get("period");
-    const price = formData.get("price");
-    const totalSupply = formData.get("totalSupply");
-    const name = formData.get("name");
-    const description = formData.get("description");
-    if (
-      typeof name !== "string" ||
-      typeof description !== "string" ||
-      typeof period !== "string" ||
-      typeof price !== "string" ||
-      typeof totalSupply !== "string"
-    )
-      throw new Error("Period must be a number");
+      const period = formData.get("period");
+      const price = formData.get("price");
+      const totalSupply = formData.get("totalSupply");
+      const name = formData.get("name");
+      const description = formData.get("description");
+      if (
+        typeof name !== "string" ||
+        typeof description !== "string" ||
+        typeof period !== "string" ||
+        typeof price !== "string" ||
+        typeof totalSupply !== "string"
+      )
+        throw new Error("Period must be a number");
 
-    const hash = await writeContractAsync({
-      abi: FACTORY_ABI,
-      address: "0xbcd773e55e8B737014D08D78d67d762F8bb83a21",
-      functionName: "createPlan",
-      args: [name, "PLAN", BigInt(totalSupply), BigInt(price), BigInt(period)],
-    });
+      const hash = await writeContractAsync({
+        abi: FACTORY_ABI,
+        address: FACTORY_ADDRESS,
+        functionName: "createPlan",
+        args: [
+          name,
+          "PLAN",
+          BigInt(totalSupply),
+          BigInt(price),
+          BigInt(period),
+        ],
+      });
 
-    await factoryCreatePlan(hash, userId, {
-      name,
-      period,
-      description,
-    });
+      await factoryCreatePlan(hash, userId, {
+        name,
+        period,
+        description,
+      });
+
+      alert("Plan created successfully");
+    } catch (e) {
+      console.error(e);
+      alert("Something error");
+    }
 
     return null;
   }

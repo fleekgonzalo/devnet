@@ -23,7 +23,7 @@ export const FACTORY_ABI = [
       { name: "mintPrice_", type: "uint256", internalType: "uint256" },
       { name: "period_", type: "uint256", internalType: "uint256" },
     ],
-    outputs: [],
+    outputs: [{ name: "plan", type: "address", internalType: "address" }],
     stateMutability: "nonpayable",
   },
   {
@@ -42,6 +42,32 @@ export const FACTORY_ABI = [
     ],
     outputs: [{ name: "", type: "address", internalType: "address" }],
     stateMutability: "view",
+  },
+  {
+    type: "event",
+    name: "PlanCreated",
+    inputs: [
+      {
+        name: "creator",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      { name: "name", type: "string", indexed: true, internalType: "string" },
+      {
+        name: "plan",
+        type: "address",
+        indexed: false,
+        internalType: "address",
+      },
+      {
+        name: "createAt",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+    ],
+    anonymous: false,
   },
   { type: "error", name: "Create2EmptyBytecode", inputs: [] },
   { type: "error", name: "Create2FailedDeployment", inputs: [] },
