@@ -1,7 +1,7 @@
 "use server";
 
 import { PrismaClient, User } from "@prisma/client";
-import { cache } from "react";
+
 const prisma = new PrismaClient();
 
 export async function authUser(id: string) {
@@ -15,6 +15,7 @@ export async function authUser(id: string) {
     const user = await prisma.user.create({
       data: {
         id,
+        startedPlan: [],
       },
     });
 
@@ -24,7 +25,7 @@ export async function authUser(id: string) {
   console.log("User login", user);
 }
 
-export const getUser = cache(async (id: string) => {
+export const getUser = async (id: string) => {
   const user = await prisma.user.findUnique({
     where: {
       id,
@@ -34,7 +35,7 @@ export const getUser = cache(async (id: string) => {
   if (!user) throw new Error("User not found");
 
   return user;
-});
+};
 
 // Update a user by ID
 export async function updateUser(id: string, data: Partial<User>) {

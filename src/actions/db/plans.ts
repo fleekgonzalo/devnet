@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 export async function createPlan(
   userId: string,
   planData: {
+    price: bigint;
     period: string;
     contract: `0x${string}`;
     name: string;
@@ -16,7 +17,7 @@ export async function createPlan(
   console.log("Creating plan for user", userId);
   const plan = await prisma.plan.create({
     data: {
-      User: {
+      creator: {
         connect: { id: userId },
       },
       ...planData,
@@ -38,6 +39,18 @@ export async function getPlanById(planId: string) {
     console.log("Plan not found");
     return null;
   }
+
+  console.log("Plan fetched", plan);
+  return plan;
+}
+
+export async function getPlanByContract(contract: `0x${string}`) {
+  console.log("Fetching plan with contract", contract);
+  const plan = await prisma.plan.findFirst({
+    where: { contract },
+  });
+
+  if (!plan) throw new Error("Plan not found");
 
   console.log("Plan fetched", plan);
   return plan;

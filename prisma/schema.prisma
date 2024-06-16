@@ -17,21 +17,22 @@ datasource db {
 model User {
   id          String    @id
   description String?
+  plans       Plan[]
+  startedPlan String[] //Record IDs
+  Product     Product[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  plans       Plan[]
-  Product     Product[]
 }
 
 model Plan {
   id          String   @id @default(cuid())
   userId      String
   period      String
-  contract    String
+  contract    String   @unique
   price       BigInt
   name        String
   description String
-  User        User     @relation(fields: [userId], references: [id])
+  creator     User     @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

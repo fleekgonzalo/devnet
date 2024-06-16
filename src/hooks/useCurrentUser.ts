@@ -1,16 +1,27 @@
-import { getPlansByUserId } from "@/actions/db/plans";
+import { getPlans } from "@/actions/contracts/factory";
+import { getPlanByContract } from "@/actions/db/plans";
 import { getUser } from "@/actions/db/user";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import useSWR from "swr";
+import { Address } from "viem";
 
 const fetcher = async (id: string) => {
   console.log("Fetching user data");
   return await getUser(id);
 };
 
-const planFetcher = async (id: string) => {
+const planFetcher = async (creator: Address) => {
   console.log("Fetching plan data");
-  return await getPlansByUserId(id);
+  const plans = await getPlans(creator);
+  const planData = await Promise.all(
+    plans.map(async (plan) => {
+      const planData = await getPlanByContract(plan);
+      return planData;
+    })
+  );
+
+  console.log("Plan data", planData);
+  return planData;
 };
 
 export function useCurrentUser() {
@@ -20,9 +31,9 @@ export function useCurrentUser() {
     () => fetcher(dynamicUser?.userId!)
   );
 
-  const { data: plans } = useSWR(
+  const { data: plans, error } = useSWR(
     dynamicUser?.userId ? `plans/${dynamicUser.userId}` : null,
-    () => planFetcher(dynamicUser?.userId!)
+    () => planFetcher("0xE523084c3809821cb9eA1fB8792664E5CC420012")
   );
 
   return { user, plans };

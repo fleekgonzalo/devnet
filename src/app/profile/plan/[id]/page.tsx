@@ -1,12 +1,15 @@
 "use client";
-import Link from "next/link";
-import React from "react";
-import { useParams } from "next/navigation";
-import { usePlan } from "@/hooks/usePlan";
-import { useWriteContract } from "wagmi";
 import { PLAN_ABI } from "@/abis/plan";
+import { activePlan } from "@/actions/contracts/plan";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { usePlan } from "@/hooks/usePlan";
+
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useWriteContract } from "wagmi";
 
 const Page = () => {
+  const { user } = useCurrentUser();
   const { id } = useParams();
   const { plan } = usePlan(id as string);
   const { writeContractAsync } = useWriteContract();
@@ -15,12 +18,15 @@ const Page = () => {
 
   const startPlan = async () => {
     try {
-      await writeContractAsync({
+      const hash = await writeContractAsync({
         address: plan?.contract as `0x${string}`,
         abi: PLAN_ABI,
-        functionName: "startPlan",
+        functionName: "active",
         args: [],
       });
+
+      await activePlan(hash, user?.id!, plan?.contract! as `0x${string}`);
+
       console.log("Start plan !!");
     } catch (error) {
       console.error("Error starting plan:", error);

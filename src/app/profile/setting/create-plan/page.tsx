@@ -140,6 +140,7 @@ const Page = () => {
 
       await factoryCreatePlan(hash, userId, {
         name,
+        price: BigInt(price),
         period,
         description,
       });
