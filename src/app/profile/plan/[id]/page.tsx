@@ -3,6 +3,7 @@ import { PLAN_ABI } from "@/abis/plan";
 import { activePlan } from "@/actions/contracts/plan";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { usePlan } from "@/hooks/usePlan";
+import assert from "assert";
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -18,6 +19,9 @@ const Page = () => {
 
   const startPlan = async () => {
     try {
+      assert(user?.id, "User is undefined");
+      assert(plan?.id, "Plan is undefined");
+
       const hash = await writeContractAsync({
         address: plan?.contract as `0x${string}`,
         abi: PLAN_ABI,
@@ -25,11 +29,12 @@ const Page = () => {
         args: [],
       });
 
-      await activePlan(hash, user?.id!, plan?.contract! as `0x${string}`);
+      await activePlan(hash, user.id, plan.id);
 
-      console.log("Start plan !!");
+      alert("Start plan !!");
     } catch (error) {
       console.error("Error starting plan:", error);
+      alert("Something error");
     }
   };
 

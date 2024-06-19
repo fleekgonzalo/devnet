@@ -6,13 +6,12 @@ import useSWR from "swr";
 import { Address } from "viem";
 
 const fetcher = async (id: string) => {
-  console.log("Fetching user data");
   return await getUser(id);
 };
 
 const planFetcher = async (creator: Address) => {
-  console.log("Fetching plan data");
   const plans = await getPlans(creator);
+
   const planData = await Promise.all(
     plans.map(async (plan) => {
       const planData = await getPlanByContract(plan);
@@ -20,7 +19,6 @@ const planFetcher = async (creator: Address) => {
     })
   );
 
-  console.log("Plan data", planData);
   return planData;
 };
 

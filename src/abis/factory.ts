@@ -35,7 +35,17 @@ export const FACTORY_ABI = [
   },
   {
     type: "function",
-    name: "ownerToProduct",
+    name: "isPlan",
+    inputs: [
+      { name: "creator", type: "address", internalType: "address" },
+      { name: "plan", type: "address", internalType: "address" },
+    ],
+    outputs: [{ name: "", type: "bool", internalType: "bool" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "userToPlans",
     inputs: [
       { name: "", type: "address", internalType: "address" },
       { name: "", type: "uint256", internalType: "uint256" },

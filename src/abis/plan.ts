@@ -13,6 +13,13 @@ export const PLAN_ABI = [
   },
   {
     type: "function",
+    name: "TOTAL_SUPPLY",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     name: "active",
     inputs: [],
     outputs: [],
@@ -32,6 +39,13 @@ export const PLAN_ABI = [
     type: "function",
     name: "balanceOf",
     inputs: [{ name: "owner", type: "address", internalType: "address" }],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "currentSupply",
+    inputs: [],
     outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "view",
   },
@@ -68,6 +82,13 @@ export const PLAN_ABI = [
   },
   {
     type: "function",
+    name: "mintPrice",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     name: "name",
     inputs: [],
     outputs: [{ name: "", type: "string", internalType: "string" }],
@@ -85,6 +106,13 @@ export const PLAN_ABI = [
     name: "ownerOf",
     inputs: [{ name: "tokenId", type: "uint256", internalType: "uint256" }],
     outputs: [{ name: "", type: "address", internalType: "address" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "period",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "view",
   },
   {

@@ -3,7 +3,6 @@ import { getPlanById } from "@/actions/db/plans";
 import useSWR from "swr";
 
 const planFetcher = async (id: string) => {
-  console.log("Fetching plan data");
   return await getPlanById(id);
 };
 

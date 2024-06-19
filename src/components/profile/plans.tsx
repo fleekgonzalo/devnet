@@ -47,7 +47,7 @@ const Plans = () => {
     <section className="relative w-[960px] h-[484px] bg-transparent">
       <div className="px-4 pt-5 pb-3 flex flex-col gap-0 items-start self-stretch relative w-[960px] bg-transparent">
         <h4 className="font-bold leading-7 text-[22px] text-[#141414]">
-          Learning Plans
+          Plans
         </h4>
       </div>
       {plans?.map((plan, index) => {

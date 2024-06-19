@@ -2,7 +2,6 @@
 
 import { updateUser } from "@/actions/db/user";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { useUser } from "@/hooks/useUser";
 import { Plan } from "@prisma/client";
 import assert from "assert";
 import Link from "next/link";
@@ -75,15 +74,20 @@ const SettingPlanItem = ({ plan }: { plan: Plan }) => {
 
 const Page = () => {
   const { user, plans } = useCurrentUser();
+  const [isDisable, setIsDisable] = React.useState(true);
   const [bio, setBio] = React.useState("");
 
   const handleBioChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setBio(event.target.value);
+    setIsDisable(false);
+    if (event.target.value === user?.description) setIsDisable(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     assert(user, "Setting: User is undefined");
-    updateUser(user?.id, { description: bio });
+    await updateUser(user?.id, { description: bio });
+
+    alert("Update information success");
   };
 
   return (
@@ -162,7 +166,8 @@ const Page = () => {
 
         <button
           onClick={handleSave}
-          className="overflow-hidden rounded-xl px-4 flex gap-0 justify-center items-center relative w-[84px] h-8 bg-[#2194f2]"
+          disabled={isDisable}
+          className={`overflow-hidden rounded-xl px-4 flex gap-0 justify-center items-center relative w-[84px] h-8 ${isDisable ? "bg-white text-slate-600" : "bg-[#2194f2]"}`}
         >
           <div className="overflow-hidden flex flex-col gap-0 items-center relative bg-transparent">
             <small className="text-center font-medium leading-[21px] text-sm text-[#f7fafc]">

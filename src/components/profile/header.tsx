@@ -1,3 +1,5 @@
+"use client";
+
 import { GithubIcon, TwitterIcon } from "@dynamic-labs/iconic";
 import {
   useDynamicContext,

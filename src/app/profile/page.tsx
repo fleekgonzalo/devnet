@@ -4,6 +4,7 @@ import About from "@/components/profile/about";
 import Header from "@/components/profile/header";
 import Nfts from "@/components/profile/nfts";
 import Plans from "@/components/profile/plans";
+import LearningPlan from "@/components/profile/learning-plan";
 
 const Profile = () => {
   return (
@@ -11,6 +12,7 @@ const Profile = () => {
       <Header />
       <About />
       <Nfts />
+      <LearningPlan />
       <Plans />
     </div>
   );

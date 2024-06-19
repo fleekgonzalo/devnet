@@ -3,7 +3,6 @@ import { getUser } from "@/actions/db/user";
 import useSWR from "swr";
 
 const userFetcher = async (id: string) => {
-  console.log("Fetching user data");
   return await getUser(id);
 };
 
