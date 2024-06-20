@@ -1,21 +1,61 @@
 "use client";
 import { PLAN_ABI } from "@/abis/plan";
-import { activePlan } from "@/actions/contracts/plan";
+import { activePlan, mintPlanNFT } from "@/actions/contracts/plan";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { usePlan } from "@/hooks/usePlan";
+import { usePlanBtnStatus } from "@/hooks/usePlanBtnStatus";
 import assert from "assert";
-
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useWriteContract } from "wagmi";
+import {
+  BaseError,
+  ContractFunctionExecutionError,
+  ContractFunctionRevertedError,
+} from "viem";
+import { useAccount, useWriteContract } from "wagmi";
 
 const Page = () => {
   const { user } = useCurrentUser();
+  const account = useAccount();
   const { id } = useParams();
+  const { buttonStatus } = usePlanBtnStatus(
+    account.address!,
+    user!,
+    id as string
+  );
+
   const { plan } = usePlan(id as string);
   const { writeContractAsync } = useWriteContract();
 
   const mockUser = "ZoraFox"; // Replace with actual user data
+
+  const finishPlan = async () => {
+    try {
+      assert(user?.id, "User is undefined");
+      assert(plan?.id, "Plan is undefined");
+
+      console.log("Finishing plan...");
+
+      const hash = await writeContractAsync({
+        address: plan?.contract as `0x${string}`,
+        abi: PLAN_ABI,
+        functionName: "mint",
+        value: plan.price,
+        args: [],
+      });
+
+      await mintPlanNFT(hash, user.id, plan.id);
+
+      alert("Start plan !!");
+    } catch (e) {
+      const error = e as BaseError;
+      const cause = error.cause as ContractFunctionRevertedError;
+
+      //TODO: fix total supply
+      console.error("Error finish plan:", cause.reason);
+      alert("Something error");
+    }
+  };
 
   const startPlan = async () => {
     try {
@@ -304,12 +344,13 @@ const Page = () => {
       <div className="flex justify-between items-start self-stretch relative w-full bg-transparent">
         <div className="px-4 py-3 flex gap-3 justify-end items-start flex-1 flex-wrap relative w-full bg-transparent">
           <button
-            onClick={startPlan}
-            className="overflow-hidden rounded-xl px-4 flex gap-0 justify-center items-center relative h-10 bg-[#2194f2]"
+            onClick={buttonStatus === "Inactive" ? startPlan : finishPlan}
+            disabled={buttonStatus === "Active"}
+            className={`overflow-hidden rounded-xl px-4 flex gap-0 justify-center items-center relative h-10  ${buttonStatus === "Active" ? "bg-[#e8edf5]" : "bg-[#2194f2]"}`}
           >
             <div className="overflow-hidden flex flex-col gap-0 items-center relative bg-transparent">
               <small className="text-center font-bold leading-[21px] text-sm text-[#f7fafc]">
-                Start Learning
+                {buttonStatus}
               </small>
             </div>
           </button>

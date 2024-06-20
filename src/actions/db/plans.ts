@@ -2,8 +2,6 @@
 "use server";
 
 import { PrismaClient } from "@prisma/client";
-import { getPlans } from "@/actions/contracts/factory";
-import type { Address } from "viem";
 const prisma = new PrismaClient();
 
 export async function createPlan(
