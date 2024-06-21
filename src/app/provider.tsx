@@ -21,7 +21,7 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
         events: {
           onAuthSuccess: (args) => {
             console.log("Auth success");
-            if (args.user.userId) authUser(args.user.userId);
+            if (args.user) authUser(args.user);
           },
         },
       }}

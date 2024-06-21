@@ -1,12 +1,12 @@
 "use client";
 
-import { useCurrentUser } from "@/hooks/useCurrentUser";
 import Link from "next/link";
 import usePlans from "@/hooks/usePlans";
+import { useAccount } from "wagmi";
 
 const LearningPlan = () => {
-  const { user } = useCurrentUser();
-  const { plans } = usePlans(user?.startedPlan);
+  const account = useAccount();
+  const plans = usePlans(account.address!);
 
   return (
     <section className="relative w-[960px] bg-transparent">
@@ -14,11 +14,14 @@ const LearningPlan = () => {
         <h4 className="font-bold leading-7 text-[22px] text-[#141414]">
           Learning
         </h4>
-        <div>
+        <div className="w-full mt-[30px]">
           {plans &&
             plans.map((plan, index) => (
-              <div key={index}>
-                <Link href={`/profile/plan/${plan.id}`}>{plan.name}</Link>
+              <div
+                key={index}
+                className="px-10 py-4 w-full bg-slate-300 rounded-lg"
+              >
+                <Link href={`/profile/plan/${plan.id}`}>{plan.title}</Link>
               </div>
             ))}
         </div>

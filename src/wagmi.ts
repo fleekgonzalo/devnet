@@ -1,13 +1,12 @@
 import { http, createConfig } from "wagmi";
-import { base, zora, zoraSepolia } from "wagmi/chains";
+import { base, sepolia } from "wagmi/chains";
 
 export const config = createConfig({
-  chains: [base, zora, zoraSepolia],
+  chains: [base, sepolia],
   multiInjectedProviderDiscovery: false,
   ssr: true,
   transports: {
     [base.id]: http(),
-    [zora.id]: http(),
-    [zoraSepolia.id]: http(),
+    [sepolia.id]: http(),
   },
 });

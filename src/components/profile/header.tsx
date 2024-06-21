@@ -11,7 +11,6 @@ import React from "react";
 
 const Header = () => {
   const { user } = useDynamicContext();
-
   const { isLinked, getLinkedAccountInformation } = useSocialAccounts();
 
   const isGithubLiken = isLinked(ProviderEnum.Github);

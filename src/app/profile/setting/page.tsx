@@ -37,7 +37,7 @@ const SettingPlanItem = ({ plan }: { plan: Plan }) => {
         <div className="flex flex-col gap-0 justify-center items-start relative bg-transparent">
           <div className="overflow-hidden flex flex-col gap-0 items-start relative w-[124px] bg-transparent">
             <p className="font-medium leading-6 text-base text-[#0d141c]">
-              {plan.name}
+              {plan.title}
             </p>
           </div>
           <div className="overflow-hidden flex flex-col gap-0 items-start relative bg-transparent">

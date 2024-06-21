@@ -2,11 +2,11 @@
 
 import React from "react";
 import { useFormState } from "react-dom";
-import { useWriteContract } from "wagmi";
-import { factoryCreatePlan } from "@/actions/contracts/factory";
+import { useAccount, useWriteContract } from "wagmi";
+import { routerCreatePlan } from "@/actions/contracts/router";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { FACTORY_ABI } from "@/abis/factory";
-import { FACTORY_ADDRESS } from "@/utils/constants";
+import { ROUTER_ABI } from "@/abis/router";
+import { ROUTER_ADDR } from "@/utils/constants";
 
 const CreatePlanForm = () => {
   return (
@@ -15,13 +15,27 @@ const CreatePlanForm = () => {
         <div className="flex flex-col gap-0 items-start flex-1 relative w-full bg-transparent">
           <div className="pt-0 pb-2 flex flex-col gap-0 items-start self-stretch relative w-full bg-transparent">
             <p className="font-medium leading-6 text-base text-[#0d141c]">
-              Name
+              Title
             </p>
           </div>
           <input
             className="overflow-hidden rounded-xl p-4 flex gap-0 items-center self-stretch relative w-full h-14 bg-[#e8edf5]"
-            name="name"
+            name="title"
             placeholder="Your Plan Name"
+          />
+        </div>
+      </div>
+
+      <div className="w-[80%] px-4 py-3 flex gap-4 items-end flex-1 flex-wrap relative h-full bg-transparent">
+        <div className="flex flex-col gap-0 items-start flex-1 relative w-full bg-transparent">
+          <div className="pt-0 pb-2 flex flex-col gap-0 items-start self-stretch relative w-full bg-transparent">
+            <p className="font-medium leading-6 text-base text-[#0d141c]">
+              Introduction
+            </p>
+          </div>
+          <textarea
+            className="overflow-hidden rounded-xl p-4 flex gap-0 items-start flex-1 self-stretch relative w-full h-full bg-[#e8edf5]"
+            name="introduction"
           />
         </div>
       </div>
@@ -84,6 +98,34 @@ const CreatePlanForm = () => {
         </div>
       </div>
 
+      <div className="flex flex-col gap-0 items-start flex-1 relative w-1/2 bg-transparent">
+        <div className="pt-0 pb-2 flex flex-col gap-0 items-start self-stretch relative w-full bg-transparent">
+          <p className="font-medium leading-6 text-base text-[#0d141c]">
+            Token Name
+          </p>
+        </div>
+        <input
+          className="overflow-hidden rounded-xl p-4 flex gap-0 items-center self-stretch relative w-full h-14 bg-[#e8edf5]"
+          placeholder="0"
+          type="text"
+          name="tokenName"
+        />
+      </div>
+
+      <div className="flex flex-col gap-0 items-start flex-1 relative w-full bg-transparent">
+        <div className="pt-0 pb-2 flex flex-col gap-0 items-start self-stretch relative w-full bg-transparent">
+          <p className="font-medium leading-6 text-base text-[#0d141c]">
+            Token Symbol
+          </p>
+        </div>
+        <input
+          className="overflow-hidden rounded-xl p-4 flex gap-0 items-center self-stretch relative w-full h-14 bg-[#e8edf5]"
+          placeholder="0"
+          type="text"
+          name="tokenSymbol"
+        />
+      </div>
+
       <button
         type="submit"
         className="px-4 py-3 flex gap-0 items-start self-stretch relative w-full bg-transparent"
@@ -100,9 +142,45 @@ const CreatePlanForm = () => {
   );
 };
 
+const parseFormData = (data: FormData) => {
+  const period = data.get("period");
+  const price = data.get("price");
+  const totalSupply = data.get("totalSupply");
+
+  const tokenName = data.get("tokenName");
+  const tokenSymbol = data.get("tokenSymbol");
+
+  const title = data.get("title");
+  const introduction = data.get("introduction");
+  const description = data.get("description");
+
+  if (
+    typeof tokenName !== "string" ||
+    typeof tokenSymbol !== "string" ||
+    typeof introduction !== "string" ||
+    typeof title !== "string" ||
+    typeof description !== "string" ||
+    typeof period !== "string" ||
+    typeof price !== "string" ||
+    typeof totalSupply !== "string"
+  )
+    throw new Error("Period must be a number");
+
+  return {
+    period,
+    price,
+    totalSupply,
+    tokenName,
+    tokenSymbol,
+    title,
+    introduction,
+    description,
+  };
+};
+
 const Page = () => {
   const { user } = useCurrentUser();
-
+  const account = useAccount();
   const { writeContractAsync } = useWriteContract();
 
   async function action(_: null, formData: FormData) {
@@ -110,38 +188,39 @@ const Page = () => {
       if (!user?.id) throw new Error("User not found");
 
       const userId = user.id;
-
-      const period = formData.get("period");
-      const price = formData.get("price");
-      const totalSupply = formData.get("totalSupply");
-      const name = formData.get("name");
-      const description = formData.get("description");
-      if (
-        typeof name !== "string" ||
-        typeof description !== "string" ||
-        typeof period !== "string" ||
-        typeof price !== "string" ||
-        typeof totalSupply !== "string"
-      )
-        throw new Error("Period must be a number");
+      const {
+        period,
+        price,
+        totalSupply,
+        tokenName,
+        tokenSymbol,
+        title,
+        introduction,
+        description,
+      } = parseFormData(formData);
 
       const hash = await writeContractAsync({
-        abi: FACTORY_ABI,
-        address: FACTORY_ADDRESS,
+        abi: ROUTER_ABI,
+        address: ROUTER_ADDR,
         functionName: "createPlan",
         args: [
-          name,
-          "PLAN",
+          account.address!,
+          tokenName,
+          tokenSymbol,
           BigInt(totalSupply),
           BigInt(price),
           BigInt(period),
         ],
       });
 
-      await factoryCreatePlan(hash, userId, {
-        name,
-        price: BigInt(price),
-        period,
+      await routerCreatePlan(hash, {
+        introduction,
+        creator: {
+          connect: {
+            id: userId,
+          },
+        },
+        title,
         description,
       });
 

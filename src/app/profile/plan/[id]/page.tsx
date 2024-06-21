@@ -1,57 +1,54 @@
 "use client";
+
 import { PLAN_ABI } from "@/abis/plan";
+import { ROUTER_ABI } from "@/abis/router";
 import { activePlan, mintPlanNFT } from "@/actions/contracts/plan";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { usePlan } from "@/hooks/usePlan";
 import { usePlanBtnStatus } from "@/hooks/usePlanBtnStatus";
+import usePlanData from "@/hooks/usePlanData";
+import { ROUTER_ADDR } from "@/utils/constants";
 import assert from "assert";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import {
-  BaseError,
-  ContractFunctionExecutionError,
-  ContractFunctionRevertedError,
-} from "viem";
+import { Address, BaseError, ContractFunctionRevertedError } from "viem";
 import { useAccount, useWriteContract } from "wagmi";
 
 const Page = () => {
   const { user } = useCurrentUser();
   const account = useAccount();
   const { id } = useParams();
-  const { buttonStatus } = usePlanBtnStatus(
-    account.address!,
-    user!,
-    id as string
-  );
-
   const { plan } = usePlan(id as string);
+  const { planData } = usePlanData(plan?.contract as Address);
   const { writeContractAsync } = useWriteContract();
 
-  const mockUser = "ZoraFox"; // Replace with actual user data
+  const { buttonStatus } = usePlanBtnStatus(
+    account.address!,
+    plan?.contract as Address
+  );
+
+  const mockUser = "Fox"; // Replace with actual user data
 
   const finishPlan = async () => {
     try {
       assert(user?.id, "User is undefined");
       assert(plan?.id, "Plan is undefined");
 
-      console.log("Finishing plan...");
-
       const hash = await writeContractAsync({
-        address: plan?.contract as `0x${string}`,
-        abi: PLAN_ABI,
+        address: ROUTER_ADDR as `0x${string}`,
+        abi: ROUTER_ABI,
         functionName: "mint",
-        value: plan.price,
-        args: [],
+        value: planData?.price,
+        args: [account.address!, plan?.contract as `0x${string}`],
       });
 
       await mintPlanNFT(hash, user.id, plan.id);
 
-      alert("Start plan !!");
+      alert("Mint !!");
     } catch (e) {
       const error = e as BaseError;
       const cause = error.cause as ContractFunctionRevertedError;
 
-      //TODO: fix total supply
       console.error("Error finish plan:", cause.reason);
       alert("Something error");
     }
@@ -63,10 +60,10 @@ const Page = () => {
       assert(plan?.id, "Plan is undefined");
 
       const hash = await writeContractAsync({
-        address: plan?.contract as `0x${string}`,
-        abi: PLAN_ABI,
+        address: ROUTER_ADDR as `0x${string}`,
+        abi: ROUTER_ABI,
         functionName: "active",
-        args: [],
+        args: [account.address!, plan?.contract as `0x${string}`],
       });
 
       await activePlan(hash, user.id, plan.id);
@@ -83,9 +80,11 @@ const Page = () => {
       <div className="border-b-4 border-slate-600 p-4 flex justify-between items-end self-stretch flex-wrap relative w-full bg-transparent">
         <div className="flex flex-row gap-0 items-end relative w-72 h-10 bg-transparent">
           <h2 className="font-bold leading-10 text-[32px] text-[#0d141c]">
-            {plan?.name}
+            {plan?.title}
           </h2>
-          <div className="ml-10 text-slate-500">{`${plan?.period}`} days</div>
+          <div className="ml-10 text-slate-500">
+            {`${planData?.period}`} days
+          </div>
         </div>
         <div className="flex flex-col text-[13px]">
           <p>{`Creator: ${mockUser}`}</p>
@@ -99,6 +98,17 @@ const Page = () => {
       <div className="px-4 pt-4 pb-2 flex flex-col gap-0 items-start self-stretch relative w-full bg-transparent">
         <p className="font-bold leading-[23px] text-lg text-[#0d141c]">
           Introduction
+        </p>
+      </div>
+      <div className="px-4 pt-1 pb-3 flex flex-col gap-0 items-start self-stretch relative w-full bg-transparent">
+        <p className="leading-6 text-base text-[#0d141c]">
+          {plan?.introduction}
+        </p>
+      </div>
+
+      <div className="px-4 pt-4 pb-2 flex flex-col gap-0 items-start self-stretch relative w-full bg-transparent">
+        <p className="font-bold leading-[23px] text-lg text-[#0d141c]">
+          Description
         </p>
       </div>
       <div className="px-4 pt-1 pb-3 flex flex-col gap-0 items-start self-stretch relative w-full bg-transparent">

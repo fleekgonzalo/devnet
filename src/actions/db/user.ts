@@ -1,28 +1,29 @@
 "use server";
 
-import { PrismaClient, User } from "@prisma/client";
+import { UserProfile } from "@dynamic-labs/types";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function authUser(id: string) {
-  const user = await prisma.user.findUnique({
-    where: {
-      id,
-    },
-  });
-
-  if (!user) {
-    const user = await prisma.user.create({
-      data: {
-        id,
-        startedPlan: [],
+export async function authUser(user: UserProfile) {
+  if (user.userId) {
+    const _user = await prisma.user.findUnique({
+      where: {
+        id: user.userId,
       },
     });
 
-    console.log("User created", user);
-  }
+    if (!_user) {
+      const _user = await prisma.user.create({
+        data: {
+          id: user.userId,
+        },
+      });
+      console.log("User created", _user);
+    }
 
-  console.log("User login", user);
+    console.log("User login", _user);
+  }
 }
 
 export const getUser = async (id: string) => {
@@ -38,7 +39,7 @@ export const getUser = async (id: string) => {
 };
 
 // Update a user by ID
-export async function updateUser(id: string, data: Partial<User>) {
+export async function updateUser(id: string, data: Prisma.UserUpdateInput) {
   const user = await prisma.user.update({
     where: {
       id,

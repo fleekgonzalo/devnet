@@ -12,7 +12,7 @@ const Plan = ({ plan }: { plan: Plan }) => {
       <div className="flex gap-4 items-center relative bg-transparent">
         <div className="overflow-hidden rounded-lg relative w-[85px] h-12 bg-[url('https://picsum.photos/id/56/48/85')] bg-cover bg-center"></div>
         <div className="overflow-hidden flex flex-col gap-0 items-start flex-1 relative w-full bg-transparent">
-          <p className="leading-6 text-base text-[#141414]">{plan.name}</p>
+          <p className="leading-6 text-base text-[#141414]">{plan.title}</p>
         </div>
       </div>
       <div className="flex flex-col gap-0 items-start relative bg-transparent">

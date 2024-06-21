@@ -1,25 +1,13 @@
 // src/actions/plans.ts
 "use server";
 
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-export async function createPlan(
-  userId: string,
-  planData: {
-    price: bigint;
-    period: string;
-    contract: `0x${string}`;
-    name: string;
-    description: string;
-  }
-) {
+export async function createPlan(input: Prisma.PlanCreateInput) {
   const plan = await prisma.plan.create({
     data: {
-      creator: {
-        connect: { id: userId },
-      },
-      ...planData,
+      ...input,
     },
   });
 

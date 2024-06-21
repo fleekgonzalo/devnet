@@ -1,25 +1,26 @@
 import useSWR from "swr";
-import { getPlanById } from "../actions/db/plans";
-import { Plan } from "@prisma/client";
+import { getUsePlans } from "@/actions/contracts/router";
+import type { Address } from "viem";
+import { getPlanByContract } from "@/actions/db/plans";
 
-const fetchPlan = async (planId: string) => {
-  const plan = await getPlanById(planId);
-  if (!plan) throw new Error(`Plan with ID ${planId} not found`);
+const fetchPlans = async (user: Address) => {
+  const planAddrs = await getUsePlans(user);
 
-  return plan;
+  if (!planAddrs) throw new Error(`Plan not found`);
+
+  const plans = await Promise.all(
+    planAddrs.map(async (planAddr) => {
+      return await getPlanByContract(planAddr);
+    })
+  );
+
+  return plans;
 };
 
-const usePlans = (planIds: string[] = []) => {
-  const { data } = useSWR<Plan[]>(planIds.length > 0 ? planIds : null, {
-    fetcher: async (ids: string[]) => {
-      const fetchPromises = ids.map((id) => fetchPlan(id));
-      return await Promise.all(fetchPromises);
-    },
-  });
+const usePlans = (user: Address) => {
+  const { data } = useSWR(user ? user : null, () => fetchPlans(user));
 
-  return {
-    plans: data,
-  };
+  return data;
 };
 
 export default usePlans;
